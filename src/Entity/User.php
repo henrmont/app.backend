@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\UserRepository;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -29,7 +30,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $password = null;
 
     #[ORM\Column(length: 180, unique: true)]
-    private ?string $username = null;
+    private ?string $alias = null;
 
     #[ORM\Column]
     private ?bool $is_valid = false;
@@ -39,6 +40,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column]
     private ?\DateTimeImmutable $updated_at = null;
+
+    #[ORM\Column]
+    private ?\DateTimeImmutable $expire_at = null;
+
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
+    private ?string $pin = null;
 
     public function getId(): ?int
     {
@@ -63,6 +70,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @see UserInterface
      */
     public function getUserIdentifier(): string
+    {
+        return (string) $this->email;
+    }
+
+    /**
+     * @see UserInterface
+     */
+    public function getUsername(): string
     {
         return (string) $this->email;
     }
@@ -110,14 +125,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         // $this->plainPassword = null;
     }
 
-    public function getUsername(): ?string
+    public function getAlias(): ?string
     {
-        return $this->username;
+        return $this->alias;
     }
 
-    public function setUsername(string $username): static
+    public function setAlias(string $alias): static
     {
-        $this->username = $username;
+        $this->alias = $alias;
 
         return $this;
     }
@@ -154,6 +169,30 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setUpdatedAt(\DateTimeImmutable $updated_at): static
     {
         $this->updated_at = $updated_at;
+
+        return $this;
+    }
+
+    public function getExpireAt(): ?\DateTimeImmutable
+    {
+        return $this->expire_at;
+    }
+
+    public function setExpireAt(\DateTimeImmutable $expire_at): static
+    {
+        $this->expire_at = $expire_at;
+
+        return $this;
+    }
+
+    public function getPin(): ?string
+    {
+        return $this->pin;
+    }
+
+    public function setPin(?string $pin): static
+    {
+        $this->pin = $pin;
 
         return $this;
     }
